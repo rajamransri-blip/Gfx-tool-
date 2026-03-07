@@ -17,7 +17,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.x'
+          flutter-version: '3.24.x'          # 👈 Updated to support Dart 3.5
 
       - name: Install dependencies
         run: flutter pub get
@@ -26,7 +26,7 @@ jobs:
         run: flutter build apk --release
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4          # ✅ Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: build/app/outputs/flutter-apk/app-release.apk
