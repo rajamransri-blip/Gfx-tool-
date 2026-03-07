@@ -1,0 +1,20 @@
+name: gfxraaz
+description: GFX Tool with Shizuku
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.5
+  http: ^1.1.0
+  path_provider: ^2.1.0
+  shared_preferences: ^2.2.0
+  shizuku: ^1.0.0
+  permission_handler: ^11.0.0
+
+flutter:
+  uses-material-design: true
