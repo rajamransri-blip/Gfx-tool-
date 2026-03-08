@@ -3,36 +3,32 @@ import 'package:shizuku_api/shizuku_api.dart';
 
 class ShizukuService {
 
-  /// Check and request Shizuku permission, then replace the file
   static Future<bool> replaceFile(File sourceFile, String targetPath) async {
 
     try {
 
-      // Check Shizuku service
-      final available = await ShizukuApi.pingBinder();
-      if (!available) {
+      // Check if Shizuku service is running
+      if (!await ShizukuApi.isRunning()) {
         return false;
       }
 
-      // Permission check
-      final permission = await ShizukuApi.checkSelfPermission();
-
-      if (!permission) {
-        final granted = await ShizukuApi.requestPermission();
-        if (!granted) return false;
+      // Request permission if needed
+      final granted = await ShizukuApi.requestPermission();
+      if (!granted) {
+        return false;
       }
 
-      // Shell command
-      final cmd =
+      // Shell command to replace file
+      final command =
           'cat "${sourceFile.path}" > "$targetPath" && chmod 644 "$targetPath"';
 
-      final result = await ShizukuApi.exec(cmd);
+      final process = await ShizukuApi.run(command);
 
-      if (result == null) {
-        return false;
+      if (process.exitCode == 0) {
+        return true;
       }
 
-      return true;
+      return false;
 
     } catch (e) {
       return false;
