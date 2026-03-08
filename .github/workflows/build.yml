@@ -1,4 +1,4 @@
-name: GFX TOOL V1APK Build
+name: GFX TOOL V1 APK Build
 
 on:
   push:
