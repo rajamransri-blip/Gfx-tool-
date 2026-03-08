@@ -16,39 +16,38 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: zulu
+          java-version: 17
 
+      # ✅ Latest Flutter (Dart 3.5+ support)
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          flutter-version: '3.19.6'
+          channel: stable
+          flutter-version: 3.22.2
 
-      # ✅ ERROR KA DIRECT SOLUTION: Naya project banakar usme aapka code dalna
+      - name: Flutter Doctor
+        run: flutter doctor
+
+      # ✅ Fresh project create
       - name: Create Fresh Project & Move Code
         run: |
-          # 1. Server par ek bilkul naya app banayenge
-          flutter create -t app fresh_app
-          
-          # 2. Naye app ka default lib folder delete karenge
+          flutter create fresh_app
           rm -rf fresh_app/lib
-          
-          # 3. Aapka lib folder aur pubspec.yaml naye app me copy karenge
           cp -r lib fresh_app/
           cp pubspec.yaml fresh_app/
 
-      # ✅ NAYE PROJECT ME JAAKAR APK BUILD KARNA
-      - name: Build APK in Fresh Project
+      # ✅ Build APK
+      - name: Build APK
         run: |
           cd fresh_app
           flutter pub get
           flutter build apk --release
-          # Build hone ke baad APK ko bahar nikal lenge
           cp build/app/outputs/flutter-apk/app-release.apk ../app-release.apk
 
+      # ✅ Upload APK
       - name: Upload Ready APK
         uses: actions/upload-artifact@v4
         with:
-          name: bgmi-uc-store-apk
+          name: gfx-tool-apk
           path: app-release.apk
