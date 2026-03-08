@@ -1,32 +1,54 @@
-name: Build APK
+name: GFX TOOL V1APK Build
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.x'          # 👈 Updated to support Dart 3.5
+          channel: 'stable'
+          flutter-version: '3.19.6'
 
-      - name: Install dependencies
-        run: flutter pub get
+      # ✅ ERROR KA DIRECT SOLUTION: Naya project banakar usme aapka code dalna
+      - name: Create Fresh Project & Move Code
+        run: |
+          # 1. Server par ek bilkul naya app banayenge
+          flutter create -t app fresh_app
+          
+          # 2. Naye app ka default lib folder delete karenge
+          rm -rf fresh_app/lib
+          
+          # 3. Aapka lib folder aur pubspec.yaml naye app me copy karenge
+          cp -r lib fresh_app/
+          cp pubspec.yaml fresh_app/
 
-      - name: Build APK
-        run: flutter build apk --release
+      # ✅ NAYE PROJECT ME JAAKAR APK BUILD KARNA
+      - name: Build APK in Fresh Project
+        run: |
+          cd fresh_app
+          flutter pub get
+          flutter build apk --release
+          # Build hone ke baad APK ko bahar nikal lenge
+          cp build/app/outputs/flutter-apk/app-release.apk ../app-release.apk
 
-      - name: Upload APK artifact
+      - name: Upload Ready APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: bgmi-uc-store-apk
+          path: app-release.apk
