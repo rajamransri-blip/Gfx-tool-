@@ -13,31 +13,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: 17
 
-      # ✅ Latest Flutter (Dart 3.5+ support)
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.22.2
+          flutter-version: 3.41.4
 
       - name: Flutter Doctor
         run: flutter doctor
 
-      # ✅ Fresh project create
-      - name: Create Fresh Project & Move Code
+      - name: Create Fresh Project
         run: |
           flutter create fresh_app
           rm -rf fresh_app/lib
           cp -r lib fresh_app/
           cp pubspec.yaml fresh_app/
 
-      # ✅ Build APK
       - name: Build APK
         run: |
           cd fresh_app
@@ -45,8 +42,7 @@ jobs:
           flutter build apk --release
           cp build/app/outputs/flutter-apk/app-release.apk ../app-release.apk
 
-      # ✅ Upload APK
-      - name: Upload Ready APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: gfx-tool-apk
